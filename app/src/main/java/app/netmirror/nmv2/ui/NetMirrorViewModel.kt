@@ -9,6 +9,7 @@ import app.netmirror.nmv2.data.NetMirrorRepository
 import app.netmirror.nmv2.data.RefreshRateMode
 import app.netmirror.nmv2.data.SettingsPreferences
 import app.netmirror.nmv2.data.SettingsRoute
+import app.netmirror.nmv2.system.NetworkMonitor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class NetMirrorViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val repository = NetMirrorRepository()
     private val preferences = SettingsPreferences(application.applicationContext)
+    private val networkMonitor = NetworkMonitor(application.applicationContext)
 
     private val _mirrorState = MutableStateFlow<MirrorConnectionState>(MirrorConnectionState.Resolving)
     val mirrorState: StateFlow<MirrorConnectionState> = _mirrorState.asStateFlow()
@@ -66,10 +68,26 @@ class NetMirrorViewModel(application: Application) : AndroidViewModel(applicatio
             _selectedRefreshRate.value = RefreshRateMode.fromHz(savedHz)
             resolveMirror()
         }
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { online ->
+                if (online && _mirrorState.value is MirrorConnectionState.Error) {
+                    resolveMirror()
+                }
+            }
+        }
     }
 
     fun resolveMirror() {
         viewModelScope.launch {
+            if (!networkMonitor.isCurrentlyConnected()) {
+                _isPageLoading.value = false
+                _isContentReady.value = false
+                _mirrorState.value = MirrorConnectionState.Error(
+                    message = "Device is offline. Connect to Wi-Fi or mobile data and retry.",
+                    triedUrls = emptyList()
+                )
+                return@launch
+            }
             _mirrorState.value = MirrorConnectionState.Resolving
             _isPageLoading.value = true
             val cached = preferences.lastMirrorUrl.first()

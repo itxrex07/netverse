@@ -79,42 +79,6 @@ fun NetMirrorWebView(
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            val enhancerScript = runCatching {
-                context.assets.open("enhancer.js").bufferedReader().use { it.readText() }
-            }.getOrNull().orEmpty()
-
-            val nativeSettingsBridgeHook = """
-                (function() {
-                  if (window.__NM_NATIVE_SETTINGS_HOOK__) return;
-                  window.__NM_NATIVE_SETTINGS_HOOK__ = true;
-                  document.addEventListener('click', function(e) {
-                    var link = e.target && e.target.closest ? e.target.closest('.bottom-navigation-container a.nav-link') : null;
-                    if (!link) return;
-                    if (link.classList.contains('setting-btn') || (link.textContent && link.textContent.trim().toLowerCase().indexOf('setting') !== -1)) {
-                      if (window.NetMirrorNative && window.NetMirrorNative.openSettings) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        window.NetMirrorNative.openSettings();
-                      }
-                    }
-                  }, true);
-                  document.addEventListener('click', function(e) {
-                    if (e.target && e.target.closest) {
-                      if (e.target.closest('.model-btn-play2, .btn-play2, .playerstart')) {
-                        if (window.NetMirrorNative && window.NetMirrorNative.onPlayerStateChanged) {
-                          window.NetMirrorNative.onPlayerStateChanged(true);
-                        }
-                      }
-                      if (e.target.closest('.btn-payer-back')) {
-                        if (window.NetMirrorNative && window.NetMirrorNative.onPlayerStateChanged) {
-                          window.NetMirrorNative.onPlayerStateChanged(false);
-                        }
-                      }
-                    }
-                  }, true);
-                })();
-            """.trimIndent()
-
             val container = FrameLayout(context).apply {
                 setBackgroundColor(Color.parseColor("#060608"))
             }
@@ -175,12 +139,8 @@ fun NetMirrorWebView(
                     return blockedAdHosts.any { lower.contains(it) }
                 }
 
-                fun injectEnhancer(view: WebView?) {
-                    if (view == null) return
-                    if (enhancerScript.isNotBlank()) {
-                        view.evaluateJavascript(enhancerScript, null)
-                    }
-                    view.evaluateJavascript(nativeSettingsBridgeHook, null)
+                fun injectNativeBridge(view: WebView?) {
+                    view?.evaluateJavascript(WebViewDomIntegration.pageScript, null)
                 }
 
                 webViewClient = object : WebViewClient() {
@@ -212,12 +172,12 @@ fun NetMirrorWebView(
 
                     override fun onPageCommitVisible(view: WebView?, pageUrl: String?) {
                         super.onPageCommitVisible(view, pageUrl)
-                        injectEnhancer(view)
+                        injectNativeBridge(view)
                     }
 
                     override fun onPageFinished(view: WebView?, pageUrl: String?) {
                         super.onPageFinished(view, pageUrl)
-                        injectEnhancer(view)
+                        injectNativeBridge(view)
                         onPageFinished(pageUrl)
                     }
 
