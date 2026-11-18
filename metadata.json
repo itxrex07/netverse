@@ -1,0 +1,8 @@
+{
+  "name": "NetMirror",
+  "description": "Ad-free streaming WebView wrapper with automated startup handshake, dedicated native Settings suite, 1080p HD toggle, live GitHub updates, and 120Hz VRR refresh rate engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

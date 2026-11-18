@@ -1,111 +1,27 @@
-# NetMirror (Ad-Free, Redesigned & Secure)
+# NetMirror (Kotlin & Jetpack Compose)
 
 <p align="center">
   <img src="art/icon.png" width="128" height="128" alt="NetMirror Logo" />
 </p>
 
-<p align="center">
-  <b>A modernized, privacy-hardened, and performance-tuned build of NetMirror.</b><br />
-  Automated startup verification bypass, dedicated native Settings UI, 120Hz VRR refresh rate engine, in-app updates, and hardware-accelerated 60 FPS / 900ms motion physics.
-</p>
+A native Android rewrite of **NetMirror (v3.4.1)** built with **Kotlin**, **Jetpack Compose**, and **Material Design 3**.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Platform Android" />
-  <img src="https://img.shields.io/badge/Version-v3.4.1-blue?style=flat-square" alt="Version v3.4.1" />
-  <img src="https://img.shields.io/badge/Target_SDK-35-blue?style=flat-square" alt="Target SDK 35" />
-  <img src="https://img.shields.io/badge/Ad--Free-Automated-success?style=flat-square" alt="Ad-Free" />
-  <img src="https://img.shields.io/badge/Display-120Hz_%2F_VRR-purple?style=flat-square" alt="120Hz VRR" />
-  <img src="https://img.shields.io/badge/Tablet-Optimized-indigo?style=flat-square" alt="Tablet Optimized" />
-</p>
+## Features
 
----
+- **Direct Content Launch & Ad-Gate Skip**: Automatically probes active NetMirror gateways (`/check.php` and primary mirrors), suppresses legacy ad-gate overlays and popup redirects, injects `enhancer.js` at page commit, and keeps the startup loader visible until catalog content is ready.
+- **Fullscreen Hardware-Accelerated Video Playback**: Supports HTML5 fullscreen video via `WebChromeClient.onShowCustomView` with immersive system bars and full-sensor orientation handling.
+- **Dedicated Native Settings Suite**:
+  - **1080p Full HD Streaming**: Toggles high-bitrate 1080p streaming with live `/mobile/setting.php` and `CookieManager` synchronization.
+  - **App Info**: Displays application version, package details, device ABIs, motion engine state, and sandbox policy.
+  - **Advanced Refresh Rate Engine**: Inspects hardware `Display.Mode` capabilities and applies 60Hz, 90Hz, 120Hz, or Dynamic VRR refresh rate preferences on the Activity window.
+- **Automated GitHub Releases**: Every push to `main` / `master` (or `v*` tag) triggers `.github/workflows/release.yml` to build debug and release APKs and publish a GitHub Release automatically.
+- **Comprehensive Back Gesture Handling**: Routes back navigation across fullscreen video, Settings sub-pages, Settings main screen, in-page JS modals/player (`pressfromAPP()`), WebView history, and app exit.
 
-## 🚀 What's New in v3.4.1 (Critical Hotfix)
+## Tech Stack
 
-### 1. ⚡ Resolved App Freeze & Image Loading Regression
-* **Eliminated Event-Loop Starvation:** Removed recursive DOM MutationObserver that caused main-thread lockups and froze the user interface after 1-3 seconds.
-* **Instant LazyLoad Processing:** Completely freed the JavaScript event loop, allowing `lazyload.min.js` to process image trays at maximum speed — zero blank placeholder boxes, all movie and series posters load instantly.
-* **Zero-Overhead Player Stacking:** Retained pure CSS viewport stacking (`#player` z-index `99999`, bottom bar `5`), cleanly hiding the bottom navigation bar during video and pre-roll playback without any JavaScript observation overhead.
-
-### 2. 🎨 Edge-to-Edge Glowing Glass App Icon (v3.4.0)
-* High-resolution glowing glass "N" artwork across all mipmap densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`).
-* Edge-to-edge scaling for adaptive circular, squircle, and round-rect launcher masks.
-* Restored standard platform system colors in `colors.xml`.
-
----
-
-## 🌟 Previous Features in v3.3.0
-
-### 1. ⚙️ Dedicated Full-Screen Settings Suite
-* **Modernized 1080p Control:** Removed the intrusive legacy floating dialog; integrated a sleek, smooth animated switch toggle with live backend cookie synchronization (`/mobile/setting.php`).
-* **App Info Sub-Screen:** Detailed system and mod specifications (Version 3.3.0, Target SDK 35, Universal ABIs, sandbox audits).
-* **Live In-App Updates:** Integrated directly with the [GitHub Releases API](https://api.github.com/repos/smartworldarafath/Netmirror/releases/latest) to fetch changelogs and download new APK updates from within the application.
-* **Advanced Refresh Rate Engine:** User-selectable display modes:
-  * **60Hz (Standard - Battery Saver)**
-  * **90Hz (Balanced)**
-  * **120Hz (Ultra Smooth 120 FPS)**
-  * **Dynamic / Variable (VRR):** Touch boost to maximum refresh rate while scrolling, dropping to 60Hz when idle.
-  * *Capability Check:* Displays friendly notification if the device's hardware does not physically support 120Hz.
-
-### 2. 📱 Android Native Back Gesture Handling
-* Seamless routing across all views:
-  * Closes video player if playing (`.btn-payer-back`).
-  * Dismisses details/trailer modals (`.btn-close2`).
-  * Collapses search overlay if active.
-  * Navigates back from Settings sub-pages to Settings main, and from Settings main to Home.
-  * Handles standard web view history before prompting application exit.
-
-### 3. 🖥️ Tablet & Large Screen Optimization
-* Full support for Android tablets, foldables, and multi-window environments via `<supports-screens>` manifest declarations and adaptive CSS breakpoints (`min-width: 600px` / `min-width: 900px`).
-
-### 4. 🛡️ Startup Ad Bypass & Zero Tracker Policy
-* Automated invisible handshake with CDN gateway; zero forced browser redirections.
-* 100% clean security audit: 0 media projection, 0 background audio recording, 0 location tracking.
-
----
-
-## 📂 Repository Structure
-
-```
-NetMirror/
-├── AndroidManifest.xml          # Cleaned manifest (SDK 35, tablet support, minimum permissions)
-├── apktool.yml                  # Apktool v3.4.1 build configuration (versionCode: 341)
-├── art/
-│   └── icon.png                 # High-resolution application launcher logo
-├── assets/
-│   ├── enhancer.js              # Native JavaScript UI, Settings, 120Hz & SPA routing engine
-│   └── index.android.bundle     # React Native runtime bundle
-├── res/
-│   ├── anim/                    # 900ms smooth cubic-bezier window animations
-│   └── values/styles.xml        # Theme definitions linked to NetMirrorWindowAnimation
-└── smali/
-    ├── app/netmirror/nmv2/MainActivity.smali           # Pre-seeds CookieManager & applies display Hz
-    └── com/reactnativecommunity/webview/
-        ├── NetMirrorBridge.smali                       # Native JavaScriptInterface for 120Hz & updates
-        ├── UIEnhancer.smali                            # Asset loader & VRR touch-boost engine
-        └── i.smali                                     # WebViewClient lifecycle integration
-```
-
----
-
-## 🛠️ How to Build from Source
-
-```bash
-# 1. Build APK
-apktool b . -o NetMirror_unaligned.apk
-
-# 2. Zipalign (4-byte alignment)
-zipalign -v -p 4 NetMirror_unaligned.apk NetMirror_aligned.apk
-
-# 3. Sign with Android debug keystore
-apksigner sign --ks ~/.android/debug.keystore --ks-pass pass:android --key-pass pass:android --out NetMirror_signed.apk NetMirror_aligned.apk
-
-# 4. Install via ADB
-adb install -r NetMirror_signed.apk
-```
-
----
-
-## ⚖️ Disclaimer
-
-This project is intended strictly for educational, performance analysis, and accessibility enhancement purposes. All trademarks, logos, and media streaming endpoints belong to their respective owners.
+- **Language**: Kotlin 2.2
+- **UI**: Jetpack Compose + Material 3 + bundled local Google Fonts (`Plus Jakarta Sans`, `Inter`)
+- **Architecture**: MVVM (`AndroidViewModel` + `StateFlow` + `NetMirrorRepository` + `DataStore`)
+- **Networking**: OkHttp + `kotlinx.serialization`
+- **CI/CD**: GitHub Actions (`.github/workflows/release.yml`)
+- **Build System**: Gradle 9.3.1 (Kotlin DSL), AGP 9.1.1, Compile SDK 36, Target SDK 35, Min SDK 24

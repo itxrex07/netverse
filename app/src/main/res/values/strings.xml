@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NetMirror</string>
+    <string name="loading_banner_text">Loading NetMirror v3.4.1</string>
+    <string name="loading_mirror_probe">Connecting to fastest NetMirror gateway…</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_quality">Streaming Quality</string>
+    <string name="settings_1080p_title">1080p Full HD Streaming</string>
+    <string name="settings_1080p_on">High-bitrate 1080p active</string>
+    <string name="settings_1080p_off">Standard definition streaming</string>
+    <string name="settings_section_general">General &amp; Preferences</string>
+    <string name="settings_app_info_title">App Info</string>
+    <string name="settings_app_info_subtitle">Version v3.4.1, architecture &amp; details</string>
+    <string name="settings_advanced_title">Advanced</string>
+    <string name="settings_advanced_subtitle">Display refresh rate (60Hz / 90Hz / 120Hz)</string>
+    <string name="app_info_title">App Info</string>
+    <string name="app_info_version_badge">Version 3.4.1 (Build 341)</string>
+    <string name="app_info_specs_header">Application Specifications</string>
+    <string name="advanced_title">Advanced Settings</string>
+    <string name="advanced_refresh_header">Display Refresh Rate</string>
+    <string name="advanced_refresh_note">Note: If your device does not physically support 90Hz or 120Hz display modes, standard 60Hz mode will be enforced automatically.</string>
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_close_settings">Close settings</string>
+    <string name="cd_open_settings">Open settings</string>
+    <string name="cd_netmirror_logo">NetMirror emblem</string>
+    <string name="offline_title">Unable to Reach NetMirror</string>
+    <string name="offline_subtitle">All mirror gateways timed out or your device is offline. Check your connection or adjust streaming preferences.</string>
+    <string name="retry_connection">Retry Connection</string>
+    <string name="open_settings">Open Settings</string>
+</resources>
